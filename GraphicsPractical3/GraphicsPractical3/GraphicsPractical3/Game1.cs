@@ -25,6 +25,9 @@ namespace GraphicsPractical3
         private Camera camera;
         private Model model;
 
+        RenderTarget2D E5RenderTarget2D; //Framebuffer to render the image to and then apply postprocessing
+        RenderTarget2D E5Frame;
+
         public Game1()
         {
             this.graphics = new GraphicsDeviceManager(this);
@@ -107,6 +110,11 @@ namespace GraphicsPractical3
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            //E5 begin
+            //E5RenderTarget2D = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
+            //graphics.GraphicsDevice.SetRenderTarget(E5RenderTarget2D);
+            //E5 einde
+
             GraphicsDevice.Clear(Color.DeepSkyBlue);
 
             Matrix world = Matrix.CreateScale(3.0f);
@@ -117,6 +125,15 @@ namespace GraphicsPractical3
             effect.CurrentTechnique = effect.Techniques["Normal"];
             effect.Parameters["World"].SetValue(world);
             mesh.Draw();
+
+            //E5 begin
+            /*graphics.GraphicsDevice.SetRenderTarget(null);
+            //E5Frame = E5RenderTarget2D;
+            effect.CurrentTechnique = effect.Techniques["E5PostProcessing"];
+            spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effect);
+            spriteBatch.Draw(E5RenderTarget2D, new Rectangle(0, 0, 800, 600), Color.DeepSkyBlue);
+            spriteBatch.End();*/
+            //E5 einde
 
             base.Draw(gameTime);
         }

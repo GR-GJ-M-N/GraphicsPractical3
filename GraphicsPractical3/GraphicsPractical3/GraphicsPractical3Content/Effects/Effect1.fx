@@ -52,3 +52,20 @@ technique Normal
         PixelShader = compile ps_2_0 PixelShaderFunction();
     }
 }
+
+// E5 ----------------------------------------------------------------
+
+float4 E5PixelShader(float4 Color : COLOR0) : COLOR
+{
+	 //return float4(1, 1, 1, 1);
+	 return float4(Color.r, Color.g, Color.b, 1);
+     //return float4(Color.r * 0.3, Color.g * 0.59, Color.b * 0.11, 1);
+} 
+
+technique E5PostProcessing
+{
+     pass P0
+     {
+          PixelShader = compile ps_2_0 E5PixelShader();
+     }
+} 
