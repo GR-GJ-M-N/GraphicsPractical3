@@ -13,7 +13,7 @@ namespace GraphicsPractical3
 {
     public enum Scenes
     {
-        Normal, White, E1
+        Normal, White, E1, E3
     }
 
     /// <summary>
@@ -28,13 +28,13 @@ namespace GraphicsPractical3
 
         // Game objects and variables
         private Camera camera;
-        private Model model;
 
         // Stuff for switching scenes
         private bool sceneHasChanged = true;
         private Scenes sceneState = Scenes.Normal;
         private Scene scene;
         private KeyboardState kState;
+        private MouseState mouseState;
 
         //Text
         private SpriteFont font;
@@ -71,10 +71,14 @@ namespace GraphicsPractical3
             // Flush the changes to the device parameters to the graphics card
             this.graphics.ApplyChanges();
             this.kState = Keyboard.GetState();
+            this.mouseState = Mouse.GetState();
             // Initialize the camera
             this.camera = new Camera(new Vector3(0, 0.5f, 2), new Vector3(0, 0, -1), new Vector3(0, 1, 0));
 
-            this.IsMouseVisible = true;
+            //Set mouse for mouselook
+            this.IsMouseVisible = false;
+            Mouse.SetPosition(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
+            this.mouseState = Mouse.GetState();
 
             base.Initialize();
         }
@@ -122,6 +126,9 @@ namespace GraphicsPractical3
                     this.sceneHasChanged = true;
             }
 
+            //Camera movement stuff
+            this.UpdateCamera(timeStep);
+
             this.kState = Keyboard.GetState();
 
             //If scene has changed, unload everything and load everything needed for the particular scene
@@ -140,6 +147,9 @@ namespace GraphicsPractical3
                         this.sceneState = Scenes.E1;
                         break;
                     case Scenes.E1:
+                        this.sceneState = Scenes.E3;
+                        break;
+                    case Scenes.E3:
                         this.sceneState = Scenes.Normal;
                         break;
                 }
@@ -165,6 +175,14 @@ namespace GraphicsPractical3
                     case Scenes.E1:
                         this.scene = new E1Scene();
                         break;
+                    case Scenes.E3:
+                        this.scene = new E3Scene();
+                        E3Scene e3Scene = (E3Scene)this.scene;
+
+                        e3Scene.effect = this.Content.Load<Effect>("Effects/CellShading");
+                        e3Scene.model = this.Content.Load<Model>("Models/bunny");
+                        e3Scene.model.Meshes[0].MeshParts[0].Effect = e3Scene.effect;
+                        break;
                 }
                 
 
@@ -172,6 +190,44 @@ namespace GraphicsPractical3
             }
 
             base.Update(gameTime);
+        }
+
+        void UpdateCamera(float timeStep)
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                //Translate camera in direction of Eye
+                Vector3 focusVector = this.camera.Focus - this.camera.Eye;
+                float translationFactor = timeStep * 0.025f;
+                focusVector = translationFactor * focusVector;
+                this.camera.Eye = this.camera.Eye + focusVector;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                //Translate camera in opposite direction of Eye
+                Vector3 focusVector = this.camera.Focus - this.camera.Eye;
+                float translationFactor = timeStep * 0.025f;
+                focusVector = translationFactor * focusVector;
+                this.camera.Eye = this.camera.Eye - focusVector;
+            }
+
+            MouseState newState = Mouse.GetState();
+
+            if (newState != this.mouseState)
+            {
+                float dX = newState.X - mouseState.X;
+                float dY = newState.Y - mouseState.Y;
+                float horRot = dX * -0.001f;
+                float verRot = dY * -0.001f;
+
+                Matrix horRotMatrix = Matrix.CreateRotationY(horRot);
+                Matrix verRotMatrix = Matrix.CreateRotationX(verRot);
+                this.camera.Focus = Vector3.Transform(this.camera.Focus - this.camera.Eye, horRotMatrix) + this.camera.Eye;
+                this.camera.Focus = Vector3.Transform(this.camera.Focus - this.camera.Eye, verRotMatrix) + this.camera.Eye;
+            }
+            //Mouse.SetPosition(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
+            this.mouseState = newState;
+
         }
 
         /// <summary>
@@ -184,6 +240,9 @@ namespace GraphicsPractical3
             //E5RenderTarget2D = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
             //graphics.GraphicsDevice.SetRenderTarget(E5RenderTarget2D);
             //E5 einde
+
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             GraphicsDevice.Clear(Color.DeepSkyBlue);
 
@@ -205,6 +264,13 @@ namespace GraphicsPractical3
                     break;
                 case Scenes.E1:
 
+                    break;
+                case Scenes.E3:
+                    E3Scene e3Scene = (E3Scene)this.scene;
+
+                    e3Scene.world = Matrix.CreateScale(3.0f);
+                    e3Scene.camera = this.camera;
+                    e3Scene.Draw();
                     break;
             }
 

@@ -43,7 +43,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
     // TODO: add your pixel shader code here.
 	//return float4(1, 1, 1, 1);
-    return float4(input.Normal.x, input.Normal.y, input.Normal.z, 1);
+    return float4(0, 0, 0, 1) + float4(input.Normal.x, input.Normal.y, input.Normal.z, 1);
 }
 
 float4 WhiteShaderFunction(VertexShaderOutput input) : COLOR0

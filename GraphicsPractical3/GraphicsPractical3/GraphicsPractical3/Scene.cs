@@ -18,6 +18,10 @@ namespace GraphicsPractical3
         public Camera camera;
         public String name;
 
+        public void Init()
+        {
+
+        }
         public abstract void Draw();
     }
 
@@ -81,6 +85,36 @@ namespace GraphicsPractical3
         public override void Draw()
         {
             //
+        }
+    }
+
+    class E3Scene : Scene
+    {
+        public ModelMesh mesh;
+        public Model model;
+
+        public E3Scene()
+        {
+            this.name = "E3";
+        }
+
+        public override void Draw()
+        {
+            this.mesh = this.model.Meshes[0];
+            Effect effect = this.mesh.Effects[0];
+
+            this.camera.SetEffectParameters(effect);
+            effect.CurrentTechnique = effect.Techniques["CellShading"];
+
+            effect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
+            effect.Parameters["Camera"].SetValue(this.camera.Eye);
+            effect.Parameters["World"].SetValue(this.world);
+            effect.Parameters["DiffuseColor"].SetValue(Color.Red.ToVector4());
+            effect.Parameters["SpecularColor"].SetValue(Color.White.ToVector4());
+            effect.Parameters["SpecularIntensity"].SetValue(0.5f);
+            effect.Parameters["SpecularPower"].SetValue(20000.0f);
+            effect.Parameters["ShadesCount"].SetValue(3);
+            this.mesh.Draw();
         }
     }
 }
