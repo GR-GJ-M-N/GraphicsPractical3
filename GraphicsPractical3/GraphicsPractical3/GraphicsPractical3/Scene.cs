@@ -92,28 +92,18 @@ namespace GraphicsPractical3
         public ModelMesh mesh;
         public Model model;
 
-        RenderTarget2D target;
-        bool test;
+        public RenderTarget2D target;
          
         public E5Scene()
         {
             name = "E5";
-            test = false;
-
-            #if DEBUG
-                test = true;
-            #endif
         }
 
         public override void Draw() {}
 
         public void DrawBefore(GraphicsDeviceManager graphics)
-        {
-            if (test)
-            {
-                target = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
-                graphics.GraphicsDevice.SetRenderTarget(target);
-            }
+        { 
+            graphics.GraphicsDevice.SetRenderTarget(target);
 
             this.mesh = this.model.Meshes[0];
             Effect effect = this.mesh.Effects[0];
@@ -129,15 +119,11 @@ namespace GraphicsPractical3
 
         public void DrawAfter(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
         {
-            if (test)
-            {
-                graphics.GraphicsDevice.SetRenderTarget(null);
-                //E5Frame = E5RenderTarget2D;
-                effect.CurrentTechnique = effect.Techniques["E5PostProcessing"];
-                spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effect);
-                spriteBatch.Draw(target, new Rectangle(0, 0, 800, 600), Color.DeepSkyBlue);
-                spriteBatch.End();
-            }
+            graphics.GraphicsDevice.SetRenderTarget(null);
+            effect.CurrentTechnique = effect.Techniques["E5PostProcessing"];
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, null, null, null, effect);
+            spriteBatch.Draw(target, new Rectangle(0, 0, 800, 600), Color.DeepSkyBlue);
+            spriteBatch.End();
         }
     }
 }

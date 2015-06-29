@@ -180,10 +180,9 @@ namespace GraphicsPractical3
                         e5Scene.effect = this.Content.Load<Effect>("Effects/Effect1");
                         e5Scene.model = this.Content.Load<Model>("Models/bunny");
                         e5Scene.model.Meshes[0].MeshParts[0].Effect = e5Scene.effect;
+                        e5Scene.target = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
                         break;
                 }
-                
-
                 this.sceneHasChanged = false;
             }
 
@@ -231,6 +230,7 @@ namespace GraphicsPractical3
                     e5Scene = (E5Scene)this.scene;
                     e5Scene.world = Matrix.CreateScale(3.0f);
                     e5Scene.camera = this.camera;
+                    
                     e5Scene.DrawBefore(graphics);
                     break;
             }

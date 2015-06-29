@@ -72,12 +72,14 @@ technique White
 
 
 // E5 ----------------------------------------------------------------
+texture textureObject;
+sampler SceneSampler = sampler_state{ Texture = <textureObject>; };
 
-float4 E5PixelShader(float4 Color : COLOR0) : COLOR
+float4 E5PixelShader(float2 TextureCoord : TEXCOORD0) : COLOR0
 {
-	 //return float4(1, 1, 1, 1);
-	 return float4(Color.r, Color.g, Color.b, 1);
-     //return float4(Color.r * 0.3, Color.g * 0.59, Color.b * 0.11, 1);
+	 float4 color = tex2D(SceneSampler, TextureCoord);    
+	 float bw = color.r * 0.3 + color.g * 0.59 + color.b * 0.11;
+     return float4(bw, bw, bw, 1);
 } 
 
 technique E5PostProcessing
@@ -88,6 +90,7 @@ technique E5PostProcessing
      }
 } 
 
+//-------------------
 
 // E1
 VertexShaderOutput BlinnPhongVertexShader(VertexShaderInput input)
