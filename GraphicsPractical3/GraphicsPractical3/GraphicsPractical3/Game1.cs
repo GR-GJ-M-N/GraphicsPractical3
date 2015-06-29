@@ -13,7 +13,7 @@ namespace GraphicsPractical3
 {
     public enum Scenes
     {
-        Normal, White, E1
+        Normal, White, E1, E5
     }
 
     /// <summary>
@@ -180,50 +180,60 @@ namespace GraphicsPractical3
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            //E5 begin
-            //E5RenderTarget2D = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
-            //graphics.GraphicsDevice.SetRenderTarget(E5RenderTarget2D);
-            //E5 einde
-
             GraphicsDevice.Clear(Color.DeepSkyBlue);
 
             switch (this.sceneState)
             {
-                case Scenes.Normal:
+                case Scenes.Normal: //NORMAL NORMAL NORMAL NORMAL NORMAL NORMAL NORMAL NORMAL NORMAL NORMAL NORMAL NORMAL NORMAL NORMAL NORMAL NORMAL NORMAL
                     NormalScene normalScene = (NormalScene)this.scene;
 
                     normalScene.world = Matrix.CreateScale(3.0f);
                     normalScene.camera = this.camera;
                     normalScene.Draw();
                     break;
-                case Scenes.White:
+
+
+
+                case Scenes.White: //WHITE WHITE WHITE WHITE WHITE WHITE WHITE WHITE WHITE WHITE WHITE WHITE WHITE WHITE WHITE WHITE WHITE WHITE WHITE WHITE
                     WhiteScene whiteScene = (WhiteScene)this.scene;
                     whiteScene.camera = this.camera;
                     whiteScene.world = Matrix.CreateScale(3.0f);
 
                     whiteScene.Draw();
                     break;
-                case Scenes.E1:
 
+
+
+                case Scenes.E1: //E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1 E1
+                    //...
+                    break;
+
+
+
+                case Scenes.E5: //E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5
+                    E5RenderTarget2D = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
+                    graphics.GraphicsDevice.SetRenderTarget(E5RenderTarget2D);
                     break;
             }
+
+
 
             this.spriteBatch.Begin();
             this.spriteBatch.DrawString(this.font, this.scene.name, new Vector2(10, 10), Color.White);
             this.spriteBatch.End();
-
-           
-
-            //E5 begin
-            /*graphics.GraphicsDevice.SetRenderTarget(null);
-            //E5Frame = E5RenderTarget2D;
-            effect.CurrentTechnique = effect.Techniques["E5PostProcessing"];
-            spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effect);
-            spriteBatch.Draw(E5RenderTarget2D, new Rectangle(0, 0, 800, 600), Color.DeepSkyBlue);
-            spriteBatch.End();*/
-            //E5 einde
-
             base.Draw(gameTime);
+
+
+
+            if (sceneState == Scenes.E5) //E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5 E5
+            {
+                graphics.GraphicsDevice.SetRenderTarget(null);
+                //E5Frame = E5RenderTarget2D;
+                effect.CurrentTechnique = effect.Techniques["E5PostProcessing"];
+                spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effect);
+                spriteBatch.Draw(E5RenderTarget2D, new Rectangle(0, 0, 800, 600), Color.DeepSkyBlue);
+                spriteBatch.End();
+            }
         }
     }
 }

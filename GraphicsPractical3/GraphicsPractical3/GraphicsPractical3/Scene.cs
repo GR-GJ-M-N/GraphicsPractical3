@@ -83,4 +83,26 @@ namespace GraphicsPractical3
             //
         }
     }
+
+    class E5Scene : Scene
+    {
+        public E5Scene()
+        {
+            this.name = "E5";
+        }
+
+        public override void Draw()
+        {
+        }
+
+        public void Draw1()
+        {
+            
+        }
+
+        public void Draw2()
+        {
+            
+        }
+    }
 }
