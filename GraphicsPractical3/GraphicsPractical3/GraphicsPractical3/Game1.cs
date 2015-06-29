@@ -183,33 +183,15 @@ namespace GraphicsPractical3
                     NormalScene normalScene = (NormalScene)this.scene;
 
                     normalScene.world = Matrix.CreateScale(3.0f);
-
-                    normalScene.mesh = normalScene.model.Meshes[0];
-                    Effect effect = normalScene.mesh.Effects[0];
-
-                    this.camera.SetEffectParameters(effect);
-                    effect.CurrentTechnique = effect.Techniques["Normal"];
-
-                    effect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
-                    effect.Parameters["Camera"].SetValue(this.camera.Eye);
-                    effect.Parameters["World"].SetValue(normalScene.world);
-                    normalScene.mesh.Draw();
+                    normalScene.camera = this.camera;
+                    normalScene.Draw();
                     break;
                 case Scenes.White:
                     WhiteScene whiteScene = (WhiteScene)this.scene;
-
+                    whiteScene.camera = this.camera;
                     whiteScene.world = Matrix.CreateScale(3.0f);
 
-                    whiteScene.mesh = whiteScene.model.Meshes[0];
-                    Effect sEffect = whiteScene.mesh.Effects[0];
-
-                    this.camera.SetEffectParameters(sEffect);
-                    sEffect.CurrentTechnique = sEffect.Techniques["White"];
-
-                    sEffect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
-                    sEffect.Parameters["Camera"].SetValue(this.camera.Eye);
-                    sEffect.Parameters["World"].SetValue(whiteScene.world);
-                    whiteScene.mesh.Draw();
+                    whiteScene.Draw();
                     break;
             }
 
