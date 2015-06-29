@@ -13,7 +13,7 @@ namespace GraphicsPractical3
 {
     public enum Scenes
     {
-        Normal, White
+        Normal, White, E1
     }
 
     /// <summary>
@@ -35,6 +35,9 @@ namespace GraphicsPractical3
         private Scenes sceneState = Scenes.Normal;
         private Scene scene;
         private KeyboardState kState;
+
+        //Text
+        private SpriteFont font;
 
         RenderTarget2D E5RenderTarget2D; //Framebuffer to render the image to and then apply postprocessing
         RenderTarget2D E5Frame;
@@ -84,7 +87,7 @@ namespace GraphicsPractical3
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            this.font = this.Content.Load<SpriteFont>("Font");
             //Effect effect = this.Content.Load<Effect>("Effects/Effect1");
             //// Load the model and let it use the "Simple" effect
             //this.model = this.Content.Load<Model>("Models/bunny");
@@ -134,6 +137,9 @@ namespace GraphicsPractical3
                         this.sceneState = Scenes.White;
                         break;
                     case Scenes.White:
+                        this.sceneState = Scenes.E1;
+                        break;
+                    case Scenes.E1:
                         this.sceneState = Scenes.Normal;
                         break;
                 }
@@ -156,7 +162,11 @@ namespace GraphicsPractical3
                         whiteScene.model = this.Content.Load<Model>("Models/bunny");
                         whiteScene.model.Meshes[0].MeshParts[0].Effect = whiteScene.effect;
                         break;
+                    case Scenes.E1:
+                        this.scene = new E1Scene();
+                        break;
                 }
+                
 
                 this.sceneHasChanged = false;
             }
@@ -193,7 +203,14 @@ namespace GraphicsPractical3
 
                     whiteScene.Draw();
                     break;
+                case Scenes.E1:
+
+                    break;
             }
+
+            this.spriteBatch.Begin();
+            this.spriteBatch.DrawString(this.font, this.scene.name, new Vector2(10, 10), Color.White);
+            this.spriteBatch.End();
 
            
 

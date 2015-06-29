@@ -16,6 +16,7 @@ namespace GraphicsPractical3
         public Matrix world;
         public Effect effect;
         public Camera camera;
+        public String name;
 
         public abstract void Draw();
     }
@@ -24,6 +25,11 @@ namespace GraphicsPractical3
     {
         public ModelMesh mesh;
         public Model model;
+
+        public NormalScene()
+        {
+            this.name = "Normal";
+        }
 
         public override void Draw()
         {
@@ -45,6 +51,11 @@ namespace GraphicsPractical3
         public ModelMesh mesh;
         public Model model;
 
+        public WhiteScene()
+        {
+            this.name = "White";
+        }
+
         public override void Draw()
         {
             this.mesh = this.model.Meshes[0];
@@ -57,6 +68,19 @@ namespace GraphicsPractical3
             sEffect.Parameters["Camera"].SetValue(this.camera.Eye);
             sEffect.Parameters["World"].SetValue(this.world);
             this.mesh.Draw();
+        }
+    }
+
+    class E1Scene : Scene
+    {
+        public E1Scene()
+        {
+            this.name = "E1";
+        }
+
+        public override void Draw()
+        {
+            //
         }
     }
 }
