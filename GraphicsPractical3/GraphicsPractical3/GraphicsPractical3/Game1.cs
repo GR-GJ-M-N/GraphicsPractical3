@@ -13,7 +13,7 @@ namespace GraphicsPractical3
 {
     public enum Scenes
     {
-        Normal, White, E1, E5
+        Normal, White, E1, E5, E6
     }
 
     /// <summary>
@@ -140,6 +140,9 @@ namespace GraphicsPractical3
                         this.sceneState = Scenes.E5;
                         break;
                     case Scenes.E5:
+                        this.sceneState = Scenes.E6;
+                        break;
+                    case Scenes.E6:
                         this.sceneState = Scenes.Normal;
                         break;
                 }
@@ -182,6 +185,15 @@ namespace GraphicsPractical3
                         e5Scene.model.Meshes[0].MeshParts[0].Effect = e5Scene.effect;
                         e5Scene.target = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
                         break;
+
+                    case Scenes.E6:
+                        this.scene = new E6Scene();
+                        E6Scene e6Scene = (E6Scene)this.scene;
+                        e6Scene.effect = this.Content.Load<Effect>("Effects/Effect1");
+                        e6Scene.model = this.Content.Load<Model>("Models/bunny");
+                        e6Scene.model.Meshes[0].MeshParts[0].Effect = e6Scene.effect;
+                        e6Scene.target = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
+                        break;
                 }
                 this.sceneHasChanged = false;
             }
@@ -198,6 +210,7 @@ namespace GraphicsPractical3
             GraphicsDevice.Clear(Color.DeepSkyBlue);
 
             E5Scene e5Scene = null;
+            E6Scene e6Scene = null;
             switch (this.sceneState)
             {
                 case Scenes.Normal:
@@ -233,6 +246,14 @@ namespace GraphicsPractical3
                     
                     e5Scene.DrawBefore(graphics);
                     break;
+
+                case Scenes.E6:
+                    e6Scene = (E6Scene)this.scene;
+                    e6Scene.world = Matrix.CreateScale(3.0f);
+                    e6Scene.camera = this.camera;
+
+                    e6Scene.DrawBefore(graphics);
+                    break;
             }
 
             this.spriteBatch.Begin();
@@ -243,6 +264,9 @@ namespace GraphicsPractical3
             if (sceneState == Scenes.E5) 
             {
                 e5Scene.DrawAfter(graphics, spriteBatch);
+            } else if (sceneState == Scenes.E6)
+            {
+                e6Scene.DrawAfter(graphics, spriteBatch);
             }
         }
     }

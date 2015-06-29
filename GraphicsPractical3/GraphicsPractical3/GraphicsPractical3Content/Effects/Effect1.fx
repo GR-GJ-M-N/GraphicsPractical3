@@ -72,12 +72,12 @@ technique White
 
 
 // E5 ----------------------------------------------------------------
-texture textureObject;
-sampler SceneSampler = sampler_state{ Texture = <textureObject>; };
+texture E5textureObject;
+sampler E5SceneSampler = sampler_state{ Texture = <E5textureObject>; };
 
 float4 E5PixelShader(float2 TextureCoord : TEXCOORD0) : COLOR0
 {
-	 float4 color = tex2D(SceneSampler, TextureCoord);    
+	 float4 color = tex2D(E5SceneSampler, TextureCoord);    
 	 float bw = color.r * 0.3 + color.g * 0.59 + color.b * 0.11;
      return float4(bw, bw, bw, 1);
 } 
@@ -90,9 +90,39 @@ technique E5PostProcessing
      }
 } 
 
-//-------------------
+// E6 ----------------------------------------------------------------
+texture E6textureObject;
+sampler E6SceneSampler = sampler_state{ Texture = <E6textureObject>; };
 
-// E1
+float4 E6PixelShader(float2 TextureCoord : TEXCOORD0) : COLOR0
+{
+	 float4 color = float4(0.0, 0.0, 0.0, 0.0);
+	 float4 weight = float4(1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0);
+
+	 color += tex2D(E6SceneSampler, TextureCoord + float2(-1, -1)) * weight;
+	 color += tex2D(E6SceneSampler, TextureCoord + float2(0, -1)) * weight;
+	 color += tex2D(E6SceneSampler, TextureCoord + float2(1, -1)) * weight;
+
+	 color += tex2D(E6SceneSampler, TextureCoord + float2(-1, 0)) * weight;
+	 color += tex2D(E6SceneSampler, TextureCoord + float2(0, 0)) * weight;
+	 color += tex2D(E6SceneSampler, TextureCoord + float2(1, 0)) * weight;
+
+	 color += tex2D(E6SceneSampler, TextureCoord + float2(-1, 1)) * weight;
+	 color += tex2D(E6SceneSampler, TextureCoord + float2(0, 1)) * weight;
+	 color += tex2D(E6SceneSampler, TextureCoord + float2(1, 1)) * weight;
+
+	 return color;
+} 
+
+technique E6PostProcessing
+{
+     pass P0
+     {
+          PixelShader = compile ps_2_0 E6PixelShader();
+     }
+} 
+
+// E1 ----------------------------------------------------------------
 VertexShaderOutput BlinnPhongVertexShader(VertexShaderInput input)
 {
 	// Allocate an empty output struct
