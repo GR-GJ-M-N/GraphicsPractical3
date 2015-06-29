@@ -28,7 +28,7 @@ namespace GraphicsPractical3
 
         // Game objects and variables
         private Camera camera;
-        private Model model;
+        //private Model model;
 
         // Stuff for switching scenes
         private bool sceneHasChanged = true;
@@ -231,7 +231,7 @@ namespace GraphicsPractical3
                     e5Scene = (E5Scene)this.scene;
                     e5Scene.world = Matrix.CreateScale(3.0f);
                     e5Scene.camera = this.camera;
-                    e5Scene.Draw1(graphics);
+                    e5Scene.DrawBefore(graphics);
                     break;
             }
 
@@ -242,7 +242,7 @@ namespace GraphicsPractical3
 
             if (sceneState == Scenes.E5) 
             {
-                e5Scene.Draw2(graphics, spriteBatch);
+                e5Scene.DrawAfter(graphics, spriteBatch);
             }
         }
     }
