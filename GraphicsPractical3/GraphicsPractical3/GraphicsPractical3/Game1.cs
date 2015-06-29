@@ -13,7 +13,7 @@ namespace GraphicsPractical3
 {
     public enum Scenes
     {
-        Normal, White, E1, E3
+        Normal, White, E1, E3, E5, E6
     }
 
     /// <summary>
@@ -38,9 +38,6 @@ namespace GraphicsPractical3
 
         //Text
         private SpriteFont font;
-
-        RenderTarget2D E5RenderTarget2D; //Framebuffer to render the image to and then apply postprocessing
-        RenderTarget2D E5Frame;
 
         public Game1()
         {
@@ -150,6 +147,12 @@ namespace GraphicsPractical3
                         this.sceneState = Scenes.E3;
                         break;
                     case Scenes.E3:
+                        this.sceneState = Scenes.E5;
+                        break;
+                    case Scenes.E5:
+                        this.sceneState = Scenes.E6;
+                        break;
+                    case Scenes.E6:
                         this.sceneState = Scenes.Normal;
                         break;
                 }
@@ -183,9 +186,24 @@ namespace GraphicsPractical3
                         e3Scene.model = this.Content.Load<Model>("Models/bunny");
                         e3Scene.model.Meshes[0].MeshParts[0].Effect = e3Scene.effect;
                         break;
-                }
-                
+                    case Scenes.E5:
+                        this.scene = new E5Scene();
+                        E5Scene e5Scene = (E5Scene)this.scene;
+                        e5Scene.effect = this.Content.Load<Effect>("Effects/Effect1");
+                        e5Scene.model = this.Content.Load<Model>("Models/bunny");
+                        e5Scene.model.Meshes[0].MeshParts[0].Effect = e5Scene.effect;
+                        e5Scene.target = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
+                        break;
 
+                    case Scenes.E6:
+                        this.scene = new E6Scene();
+                        E6Scene e6Scene = (E6Scene)this.scene;
+                        e6Scene.effect = this.Content.Load<Effect>("Effects/Effect1");
+                        e6Scene.model = this.Content.Load<Model>("Models/bunny");
+                        e6Scene.model.Meshes[0].MeshParts[0].Effect = e6Scene.effect;
+                        e6Scene.target = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
+                        break;
+                }
                 this.sceneHasChanged = false;
             }
 
@@ -240,11 +258,11 @@ namespace GraphicsPractical3
             //E5RenderTarget2D = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
             //graphics.GraphicsDevice.SetRenderTarget(E5RenderTarget2D);
             //E5 einde
+            GraphicsDevice.Clear(Color.DeepSkyBlue);
 
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-
-            GraphicsDevice.Clear(Color.DeepSkyBlue);
+            
 
             switch (this.sceneState)
             {
@@ -263,7 +281,21 @@ namespace GraphicsPractical3
                     whiteScene.Draw();
                     break;
                 case Scenes.E1:
+                    //...
+                    break;
+                case Scenes.E5:
+                    E5Scene e5Scene = (E5Scene)this.scene;
+                    e5Scene.world = Matrix.CreateScale(3.0f);
+                    e5Scene.camera = this.camera;
+                    
+                    e5Scene.DrawBefore(graphics);
+                    break;
+                case Scenes.E6:
+                    E6Scene e6Scene = (E6Scene)this.scene;
+                    e6Scene.world = Matrix.CreateScale(3.0f);
+                    e6Scene.camera = this.camera;
 
+                    e6Scene.DrawBefore(graphics);
                     break;
                 case Scenes.E3:
                     E3Scene e3Scene = (E3Scene)this.scene;
@@ -277,19 +309,15 @@ namespace GraphicsPractical3
             this.spriteBatch.Begin();
             this.spriteBatch.DrawString(this.font, this.scene.name, new Vector2(10, 10), Color.White);
             this.spriteBatch.End();
-
-           
-
-            //E5 begin
-            /*graphics.GraphicsDevice.SetRenderTarget(null);
-            //E5Frame = E5RenderTarget2D;
-            effect.CurrentTechnique = effect.Techniques["E5PostProcessing"];
-            spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effect);
-            spriteBatch.Draw(E5RenderTarget2D, new Rectangle(0, 0, 800, 600), Color.DeepSkyBlue);
-            spriteBatch.End();*/
-            //E5 einde
-
             base.Draw(gameTime);
+
+            if (sceneState == Scenes.E5) 
+            {
+                ((E5Scene)this.scene).DrawAfter(graphics, spriteBatch);
+            } else if (sceneState == Scenes.E6)
+            {
+                ((E6Scene)this.scene).DrawAfter(graphics, spriteBatch);
+            }
         }
     }
 }

@@ -77,6 +77,9 @@ namespace GraphicsPractical3
 
     class E1Scene : Scene
     {
+        //public ModelMesh mesh;
+        //public Model model;
+
         public E1Scene()
         {
             this.name = "E1";
@@ -87,7 +90,6 @@ namespace GraphicsPractical3
             //
         }
     }
-
     class E3Scene : Scene
     {
         public ModelMesh mesh;
@@ -99,7 +101,7 @@ namespace GraphicsPractical3
         }
 
         public override void Draw()
-        {
+        { 
             this.mesh = this.model.Meshes[0];
             Effect effect = this.mesh.Effects[0];
 
@@ -113,8 +115,91 @@ namespace GraphicsPractical3
             effect.Parameters["SpecularColor"].SetValue(Color.White.ToVector4());
             effect.Parameters["SpecularIntensity"].SetValue(0.5f);
             effect.Parameters["SpecularPower"].SetValue(20000.0f);
-            effect.Parameters["ShadesCount"].SetValue(3);
+            effect.Parameters["ShadesCount"].SetValue(4);
             this.mesh.Draw();
+        }
+    }
+        //////////////////////////////////////////////////////////////////////////////////
+    class E5Scene : Scene
+    {
+        public ModelMesh mesh;
+        public Model model;
+
+        public RenderTarget2D target;
+         
+        public E5Scene()
+        {
+            name = "E5";
+        }
+
+        public override void Draw() {}
+
+        public void DrawBefore(GraphicsDeviceManager graphics)
+        { 
+            graphics.GraphicsDevice.SetRenderTarget(target);
+
+            this.mesh = this.model.Meshes[0];
+            Effect effect = this.mesh.Effects[0];
+
+            this.camera.SetEffectParameters(effect);
+            effect.CurrentTechnique = effect.Techniques["Normal"];
+
+            effect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
+            effect.Parameters["Camera"].SetValue(this.camera.Eye);
+            effect.Parameters["World"].SetValue(this.world);
+            this.mesh.Draw();
+        }
+
+        public void DrawAfter(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
+        {
+            graphics.GraphicsDevice.SetRenderTarget(null);
+            effect.CurrentTechnique = effect.Techniques["E5PostProcessing"];
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, null, null, null, effect);
+            spriteBatch.Draw(target, new Rectangle(0, 0, 800, 600), Color.DeepSkyBlue);
+            spriteBatch.End();
+        }
+    }
+
+    class E6Scene : Scene
+    {
+        public ModelMesh mesh;
+        public Model model;
+
+        public RenderTarget2D target;
+
+        public E6Scene()
+        {
+            name = "E6";
+        }
+
+        public override void Draw() { }
+
+        public void DrawBefore(GraphicsDeviceManager graphics)
+        {
+            graphics.GraphicsDevice.SetRenderTarget(target);
+            this.mesh = this.model.Meshes[0];
+            Effect effect = this.mesh.Effects[0];
+
+            this.camera.SetEffectParameters(effect);
+            effect.CurrentTechnique = effect.Techniques["BlinnPhong"];
+
+            effect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
+            effect.Parameters["Camera"].SetValue(this.camera.Eye);
+            effect.Parameters["World"].SetValue(this.world);
+            effect.Parameters["DiffuseColor"].SetValue(Color.Red.ToVector4());
+            effect.Parameters["SpecularColor"].SetValue(Color.White.ToVector4());
+            effect.Parameters["SpecularIntensity"].SetValue(0.5f);
+            effect.Parameters["SpecularPower"].SetValue(20000.0f);
+            this.mesh.Draw();
+        }
+
+        public void DrawAfter(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
+        {
+            graphics.GraphicsDevice.SetRenderTarget(null);
+            effect.CurrentTechnique = effect.Techniques["E6PostProcessing"];
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, null, null, null, effect);
+            spriteBatch.Draw(target, new Rectangle(0, 0, 800, 600), Color.DeepSkyBlue);
+            spriteBatch.End();
         }
     }
 }
