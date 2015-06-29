@@ -1,6 +1,8 @@
-float4x4 World;
-float4x4 View;
-float4x4 Projection;
+float4x4 View, Projection, World;
+float3x3 InvTransposed;
+float4 DiffuseColor, AmbientColor, SpecularColor;
+float3 Light, Camera;
+float AmbientIntensity, SpecularIntensity, SpecularPower, NormalMapIntensity;
 
 // TODO: add effect parameters here.
 
@@ -44,6 +46,11 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
     return float4(input.Normal.x, input.Normal.y, input.Normal.z, 1);
 }
 
+float4 WhiteShaderFunction(VertexShaderOutput input) : COLOR0
+{
+	return float4(1, 1, 1, 1);
+}
+
 technique Normal
 {
     pass Pass1
@@ -52,6 +59,17 @@ technique Normal
         PixelShader = compile ps_2_0 PixelShaderFunction();
     }
 }
+
+technique White
+{
+    pass Pass1
+    {
+        VertexShader = compile vs_2_0 VertexShaderFunction();
+        PixelShader = compile ps_2_0 WhiteShaderFunction();
+    }
+}
+
+
 
 // E5 ----------------------------------------------------------------
 
@@ -69,3 +87,53 @@ technique E5PostProcessing
           PixelShader = compile ps_2_0 E5PixelShader();
      }
 } 
+
+
+// E1
+VertexShaderOutput BlinnPhongVertexShader(VertexShaderInput input)
+{
+	// Allocate an empty output struct
+	VertexShaderOutput output = (VertexShaderOutput)0;
+
+	// Do the matrix multiplications for perspective projection and the world transform
+	float4 worldPosition = mul(input.Position, World);
+    float4 viewPosition  = mul(worldPosition, View);
+	output.Position2D    = mul(viewPosition, Projection);
+	output.Place = worldPosition.xyz;
+	output.Normal = input.Normal3D.xyz;	
+
+	return output;
+}
+
+float4 BlinnPhongPixelShader(VertexShaderOutput input) : COLOR0
+{
+	float3x3 rotationAndScale = (float3x3) World;
+	float3 normal = input.Normal;
+	normal = mul(normal, InvTransposed);
+
+	//Normalize the normal
+	normal = normalize(normal);
+
+	//Calculate L
+	float3 lVector = normalize(Light - input.Place);
+
+	//Calculate v (the vector to the camera)
+	float3 vVector = normalize(Camera - input.Place);
+	float3 hVector = (vVector + lVector) / length(vVector + lVector);
+
+	//Calculate n dot l, clamp to 0, 1
+	float intensity = saturate(dot(normal, lVector));
+	float spec = SpecularColor * SpecularIntensity * pow(saturate(dot(normal, hVector)), SpecularPower);
+
+	return AmbientIntensity * AmbientColor + intensity * DiffuseColor + spec;
+
+}
+
+technique BlinnPhong
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_2_0 BlinnPhongVertexShader();
+		PixelShader  = compile ps_2_0 BlinnPhongPixelShader();
+	}
+}

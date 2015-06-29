@@ -11,6 +11,11 @@ using Microsoft.Xna.Framework.Media;
 
 namespace GraphicsPractical3
 {
+    public enum Scenes
+    {
+        Normal, White
+    }
+
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -24,6 +29,12 @@ namespace GraphicsPractical3
         // Game objects and variables
         private Camera camera;
         private Model model;
+
+        // Stuff for switching scenes
+        private bool sceneHasChanged = true;
+        private Scenes sceneState = Scenes.Normal;
+        private Scene scene;
+        private KeyboardState kState;
 
         RenderTarget2D E5RenderTarget2D; //Framebuffer to render the image to and then apply postprocessing
         RenderTarget2D E5Frame;
@@ -56,6 +67,7 @@ namespace GraphicsPractical3
             this.IsFixedTimeStep = false;
             // Flush the changes to the device parameters to the graphics card
             this.graphics.ApplyChanges();
+            this.kState = Keyboard.GetState();
             // Initialize the camera
             this.camera = new Camera(new Vector3(0, 0.5f, 2), new Vector3(0, 0, -1), new Vector3(0, 1, 0));
 
@@ -73,10 +85,10 @@ namespace GraphicsPractical3
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Effect effect = this.Content.Load<Effect>("Effects/Effect1");
-            // Load the model and let it use the "Simple" effect
-            this.model = this.Content.Load<Model>("Models/bunny");
-            this.model.Meshes[0].MeshParts[0].Effect = effect;
+            //Effect effect = this.Content.Load<Effect>("Effects/Effect1");
+            //// Load the model and let it use the "Simple" effect
+            //this.model = this.Content.Load<Model>("Models/bunny");
+            //this.model.Meshes[0].MeshParts[0].Effect = effect;
             // TODO: use this.Content to load your game content here
         }
 
@@ -101,6 +113,54 @@ namespace GraphicsPractical3
             // Update the window title
             this.Window.Title = "XNA Renderer | FPS: " + this.frameRateCounter.FrameRate;
 
+            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            {
+                if (this.kState.IsKeyUp(Keys.Space))
+                    this.sceneHasChanged = true;
+            }
+
+            this.kState = Keyboard.GetState();
+
+            //If scene has changed, unload everything and load everything needed for the particular scene
+            if (this.sceneHasChanged)
+            {
+                //Reset everything
+                //TODO: RESET
+                this.scene = null;
+                //Do switching
+                switch (this.sceneState)
+                {
+                    case Scenes.Normal:
+                        this.sceneState = Scenes.White;
+                        break;
+                    case Scenes.White:
+                        this.sceneState = Scenes.Normal;
+                        break;
+                }
+
+                switch (this.sceneState)
+                {
+                    case Scenes.Normal:
+                        this.scene = new NormalScene();
+                        NormalScene normalScene = (NormalScene)this.scene;
+
+                        normalScene.effect = this.Content.Load<Effect>("Effects/Effect1");
+                        normalScene.model = this.Content.Load<Model>("Models/bunny");
+                        normalScene.model.Meshes[0].MeshParts[0].Effect = normalScene.effect;
+                        break;
+                    case Scenes.White:
+                        this.scene = new WhiteScene();
+                        WhiteScene whiteScene = (WhiteScene)this.scene;
+
+                        whiteScene.effect = this.Content.Load<Effect>("Effects/Effect1");
+                        whiteScene.model = this.Content.Load<Model>("Models/bunny");
+                        whiteScene.model.Meshes[0].MeshParts[0].Effect = whiteScene.effect;
+                        break;
+                }
+
+                this.sceneHasChanged = false;
+            }
+
             base.Update(gameTime);
         }
 
@@ -117,14 +177,43 @@ namespace GraphicsPractical3
 
             GraphicsDevice.Clear(Color.DeepSkyBlue);
 
-            Matrix world = Matrix.CreateScale(3.0f);
+            switch (this.sceneState)
+            {
+                case Scenes.Normal:
+                    NormalScene normalScene = (NormalScene)this.scene;
 
-            ModelMesh mesh = this.model.Meshes[0];
-            Effect effect = mesh.Effects[0];
-            this.camera.SetEffectParameters(effect);
-            effect.CurrentTechnique = effect.Techniques["Normal"];
-            effect.Parameters["World"].SetValue(world);
-            mesh.Draw();
+                    normalScene.world = Matrix.CreateScale(3.0f);
+
+                    normalScene.mesh = normalScene.model.Meshes[0];
+                    Effect effect = normalScene.mesh.Effects[0];
+
+                    this.camera.SetEffectParameters(effect);
+                    effect.CurrentTechnique = effect.Techniques["Normal"];
+
+                    effect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
+                    effect.Parameters["Camera"].SetValue(this.camera.Eye);
+                    effect.Parameters["World"].SetValue(normalScene.world);
+                    normalScene.mesh.Draw();
+                    break;
+                case Scenes.White:
+                    WhiteScene whiteScene = (WhiteScene)this.scene;
+
+                    whiteScene.world = Matrix.CreateScale(3.0f);
+
+                    whiteScene.mesh = whiteScene.model.Meshes[0];
+                    Effect sEffect = whiteScene.mesh.Effects[0];
+
+                    this.camera.SetEffectParameters(sEffect);
+                    sEffect.CurrentTechnique = sEffect.Techniques["White"];
+
+                    sEffect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
+                    sEffect.Parameters["Camera"].SetValue(this.camera.Eye);
+                    sEffect.Parameters["World"].SetValue(whiteScene.world);
+                    whiteScene.mesh.Draw();
+                    break;
+            }
+
+           
 
             //E5 begin
             /*graphics.GraphicsDevice.SetRenderTarget(null);
