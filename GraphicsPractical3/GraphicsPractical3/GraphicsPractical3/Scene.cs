@@ -73,6 +73,9 @@ namespace GraphicsPractical3
 
     class E1Scene : Scene
     {
+        //public ModelMesh mesh;
+        //public Model model;
+
         public E1Scene()
         {
             this.name = "E1";
@@ -86,23 +89,43 @@ namespace GraphicsPractical3
 
     class E5Scene : Scene
     {
+        public ModelMesh mesh;
+        public Model model;
+
+        RenderTarget2D target;
+         
         public E5Scene()
         {
             this.name = "E5";
         }
 
-        public override void Draw()
+        public override void Draw() {}
+
+        public void Draw1(GraphicsDeviceManager graphics)
         {
+            target = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
+            graphics.GraphicsDevice.SetRenderTarget(target);
+
+            this.mesh = this.model.Meshes[0];
+            Effect effect = this.mesh.Effects[0];
+
+            this.camera.SetEffectParameters(effect);
+            effect.CurrentTechnique = effect.Techniques["Normal"];
+
+            effect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
+            effect.Parameters["Camera"].SetValue(this.camera.Eye);
+            effect.Parameters["World"].SetValue(this.world);
+            this.mesh.Draw();
         }
 
-        public void Draw1()
+        public void Draw2(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
         {
-            
-        }
-
-        public void Draw2()
-        {
-            
+            graphics.GraphicsDevice.SetRenderTarget(null);
+            //E5Frame = E5RenderTarget2D;
+            effect.CurrentTechnique = effect.Techniques["E5PostProcessing"];
+            spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effect);
+            spriteBatch.Draw(target, new Rectangle(0, 0, 800, 600), Color.DeepSkyBlue);
+            spriteBatch.End();
         }
     }
 }
