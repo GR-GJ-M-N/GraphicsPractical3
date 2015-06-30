@@ -189,11 +189,7 @@ namespace GraphicsPractical3
             weights[4] = 0.0815125f;
             weights[5] = 0.09996679f;
             weights[6] = 0.1129886f;
-
-            /*for (int i = 0; i < 7; i++)
-            {
-                weights[i] = 1 / 7.0f;
-            }*/
+            //Values from http://www.dhpoware.com/demos/xnaGaussianBlur.html#_blank
 
             //Horizontal
             Vector2[] offsets = new Vector2[7];
