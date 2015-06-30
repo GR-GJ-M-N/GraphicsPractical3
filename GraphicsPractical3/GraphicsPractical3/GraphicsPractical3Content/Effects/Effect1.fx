@@ -122,10 +122,9 @@ float4 E6PixelShader(float2 TextureCoord : TEXCOORD0) : COLOR0
 
 	 //^ OFFSET WERKT NIET GOED? ^
 
-	 //Werkt :)
 	 for (int i = 0; i < 7; ++i)
-		color += tex2D(E6SceneSampler, TextureCoord + offsets[i]) * weight; 
-        //color += tex2D(E6SceneSampler, TextureCoord + offsets[i]) * weights[i]; 
+		color += tex2D(E6SceneSampler, TextureCoord + offsets[i]) * weights[i]; 
+		//color += tex2D(E6SceneSampler, TextureCoord + offsets[i]) * weight; //Werkt ongeveer
 
 	 return color;
 } 
