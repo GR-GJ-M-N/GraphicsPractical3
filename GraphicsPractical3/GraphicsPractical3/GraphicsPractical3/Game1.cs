@@ -13,7 +13,7 @@ namespace GraphicsPractical3
 {
     public enum Scenes
     {
-        Normal, White, E1, E3, E5, E6, M4
+        Normal, White, E2, E3, E5, E6, M4
     }
 
     /// <summary>
@@ -141,9 +141,9 @@ namespace GraphicsPractical3
                         this.sceneState = Scenes.White;
                         break;
                     case Scenes.White:
-                        this.sceneState = Scenes.E1;
+                        this.sceneState = Scenes.E2;
                         break;
-                    case Scenes.E1:
+                    case Scenes.E2:
                         this.sceneState = Scenes.E3;
                         break;
                     case Scenes.E3:
@@ -178,8 +178,16 @@ namespace GraphicsPractical3
                         whiteScene.model = this.Content.Load<Model>("Models/bunny");
                         whiteScene.model.Meshes[0].MeshParts[0].Effect = whiteScene.effect;
                         break;
-                    case Scenes.E1:
-                        this.scene = new E1Scene();
+                    case Scenes.E2:
+                        this.scene = new E2Scene();
+                        E2Scene e2Scene = (E2Scene)this.scene;
+
+                        e2Scene.effect = this.Content.Load<Effect>("Effects/Effect1");
+                        e2Scene.model = this.Content.Load<Model>("Models/bunny");
+                        e2Scene.model.Meshes[0].MeshParts[0].Effect = e2Scene.effect;
+                        e2Scene.quadTexture = Content.Load<Texture>("Textures/CobblestonesDiffuse");
+                        e2Scene.setupQuad();
+
                         break;
                     case Scenes.E3:
                         this.scene = new E3Scene();
@@ -293,8 +301,12 @@ namespace GraphicsPractical3
 
                     whiteScene.Draw();
                     break;
-                case Scenes.E1:
-                    //...
+                case Scenes.E2:
+                    E2Scene e2Scene = (E2Scene)this.scene;
+
+                    e2Scene.world = Matrix.CreateScale(3.0f);
+                    e2Scene.camera = this.camera;
+                    e2Scene.Draw();
                     break;
                 case Scenes.E5:
                     E5Scene e5Scene = (E5Scene)this.scene;

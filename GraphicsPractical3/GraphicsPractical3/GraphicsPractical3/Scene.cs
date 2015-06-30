@@ -63,31 +63,94 @@ namespace GraphicsPractical3
         public override void Draw()
         {
             this.mesh = this.model.Meshes[0];
-            Effect sEffect = this.mesh.Effects[0];
+            Effect effect = this.mesh.Effects[0];
 
-            this.camera.SetEffectParameters(sEffect);
-            sEffect.CurrentTechnique = sEffect.Techniques["White"];
+            this.camera.SetEffectParameters(effect);
+            effect.CurrentTechnique = effect.Techniques["White"];
 
-            sEffect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
-            sEffect.Parameters["Camera"].SetValue(this.camera.Eye);
-            sEffect.Parameters["World"].SetValue(this.world);
+            effect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
+            effect.Parameters["Camera"].SetValue(this.camera.Eye);
+            effect.Parameters["World"].SetValue(this.world);
             this.mesh.Draw();
         }
     }
 
-    class E1Scene : Scene
+    class E2Scene : Scene
     {
-        //public ModelMesh mesh;
-        //public Model model;
+        public ModelMesh mesh;
+        public Model model;
 
-        public E1Scene()
+        public Texture quadTexture;
+        private VertexPositionNormalTexture[] quadVertices;
+        private short[] quadIndices;
+        private Matrix quadTransform;
+
+        public E2Scene()
         {
-            this.name = "E1";
+            this.name = "E2";
         }
 
         public override void Draw()
         {
-            //
+        }
+
+        public void Draw2(ContentManager Content, GraphicsDevice graphicsDevice)
+        {
+            Effect quadEffect = Content.Load<Effect>("Effects/Simple");
+            quadEffect.Parameters["QuadTexture"].SetValue(this.quadTexture);
+            quadEffect.Parameters["World"].SetValue(this.quadTransform);
+            quadEffect.CurrentTechnique = quadEffect.Techniques["Texture"];
+            //quadEffect.CurrentTechnique = quadEffect.Techniques["E2Spotlight"];
+            this.camera.SetEffectParameters(quadEffect);
+
+            foreach (EffectPass pass in quadEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, this.quadVertices, 0, 4, this.quadIndices, 0, 2, VertexPositionNormalTexture.VertexDeclaration);
+            }
+
+            this.mesh = this.model.Meshes[0];
+            Effect effect = this.mesh.Effects[0];
+
+            this.camera.SetEffectParameters(effect);
+            effect.CurrentTechnique = effect.Techniques["E2Spotlight"];
+
+            effect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
+            effect.Parameters["Camera"].SetValue(this.camera.Eye);
+            effect.Parameters["World"].SetValue(this.world);
+
+            this.mesh.Draw();
+        }
+
+        public void setupQuad()
+        {
+            float scale = 50.0f;
+
+            // Normal points up
+            Vector3 quadNormal = new Vector3(0, 1, 0);
+
+            this.quadVertices = new VertexPositionNormalTexture[4];
+            // Top left
+            this.quadVertices[0].Position = new Vector3(-1, 0, -1);
+            this.quadVertices[0].Normal = quadNormal;
+            this.quadVertices[0].TextureCoordinate = new Vector2(-1, -1);
+            // Top right
+            this.quadVertices[1].Position = new Vector3(1, 0, -1);
+            this.quadVertices[1].Normal = quadNormal;
+            this.quadVertices[1].TextureCoordinate = new Vector2(1, -1);
+            // Bottom left
+            this.quadVertices[2].Position = new Vector3(-1, 0, 1);
+            this.quadVertices[2].Normal = quadNormal;
+            this.quadVertices[2].TextureCoordinate = new Vector2(-1, 1);
+            // Bottom right
+            this.quadVertices[3].Position = new Vector3(1, 0, 1);
+            this.quadVertices[3].Normal = quadNormal;
+            this.quadVertices[3].TextureCoordinate = new Vector2(1, 1);
+
+            this.quadIndices = new short[] { 0, 1, 2, 1, 2, 3 };
+            this.quadTransform = Matrix.CreateScale(scale);
+            Matrix translation = Matrix.CreateTranslation(0, -15.0f, 0);
+            this.quadTransform = Matrix.Multiply(this.quadTransform, translation);
         }
     }
     class E3Scene : Scene
