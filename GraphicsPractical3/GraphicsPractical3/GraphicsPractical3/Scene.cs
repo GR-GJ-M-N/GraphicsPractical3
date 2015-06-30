@@ -181,7 +181,8 @@ namespace GraphicsPractical3
             Effect effect = this.mesh.Effects[0];
 
             this.camera.SetEffectParameters(effect);
-            effect.CurrentTechnique = effect.Techniques["BlinnPhong"];
+            //effect.CurrentTechnique = effect.Techniques["BlinnPhong"];
+            effect.CurrentTechnique = effect.Techniques["Normal"];
 
             effect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
             effect.Parameters["Camera"].SetValue(this.camera.Eye);
@@ -195,9 +196,44 @@ namespace GraphicsPractical3
 
         public void DrawAfter(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
         {
+            float[] weights = new float[7];
+            weights[0] = 0.0159284f;
+            weights[1] = 0.02707784f;
+            weights[2] = 0.04242319f;
+            weights[3] = 0.06125479f;
+            weights[4] = 0.0815125f;
+            weights[5] = 0.09996679f;
+            weights[6] = 0.1129886f;
+
+            /*for (int i = 0; i < 7; i++)
+            {
+                weights[i] = 1 / 7.0f;
+            }*/
+
+            //Horizontal
+            Vector2[] offsets = new Vector2[7];
+            for (int i = 0; i < 7; i++)
+            {
+                offsets[i] = new Vector2((-3 + i) / 800.0f, 0);
+            }
+
             graphics.GraphicsDevice.SetRenderTarget(null);
             effect.CurrentTechnique = effect.Techniques["E6PostProcessing"];
+            effect.Parameters["offsets"].SetValue(offsets);
+            effect.Parameters["weights"].SetValue(weights);
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, null, null, null, effect);
+            spriteBatch.Draw(target, new Rectangle(0, 0, 800, 600), Color.DeepSkyBlue);
+            spriteBatch.End();
+
+            //Vertical
+            offsets = new Vector2[7];
+            for (int i = 0; i < 7; i++)
+            {
+                offsets[i] = new Vector2(0, (-3 + i) / 800.0f);
+            }
+            effect.Parameters["offsets"].SetValue(offsets);
+            effect.Parameters["weights"].SetValue(weights);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, null, null, null, effect);
             spriteBatch.Draw(target, new Rectangle(0, 0, 800, 600), Color.DeepSkyBlue);
             spriteBatch.End();
         }
