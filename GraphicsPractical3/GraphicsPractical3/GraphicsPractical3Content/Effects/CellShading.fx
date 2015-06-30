@@ -5,15 +5,11 @@ float3 Light, Camera;
 float AmbientIntensity, SpecularIntensity, SpecularPower, NormalMapIntensity;
 int ShadesCount;
 
-// TODO: add effect parameters here.
-
 struct VertexShaderInput
 {
     float4 Position3D : POSITION0;
 	float4 Normal3D : NORMAL0;
 	float4 Color : COLOR0;
-    // TODO: add input channels such as texture
-    // coordinates and vertex colors here.
 };
 
 struct VertexShaderOutput
@@ -46,7 +42,6 @@ float4 CellPixelShader(VertexShaderOutput input) : COLOR0
 {
 	float3x3 rotationAndScale = (float3x3) World;
 	float3 normal = input.Normal;
-	//normal = mul(normal, InvTransposed);
 
 	//Normalize the normal
 	normal = normalize(normal);
@@ -61,20 +56,21 @@ float4 CellPixelShader(VertexShaderOutput input) : COLOR0
 	//Calculate n dot l, clamp to 0, 1
 	float intensity = saturate(dot(normal, lVector));
 	float specIntensity = SpecularIntensity * pow(saturate(dot(normal, hVector)), SpecularPower);
+
+	//Use ceiling to create the distinct specular colors.
 	specIntensity = ceil(specIntensity * ShadesCount)/ShadesCount;
 
+	//Same, but for the diffuse color
 	intensity = ceil(intensity * ShadesCount)/ShadesCount;
 
+	//Add the respective intensities and colors
 	return float4((float3)(intensity * DiffuseColor + specIntensity * SpecularColor), 1);
-	//return float4(input.WorldPosition, 1);
 }
 
 technique CellShading
 {
     pass Pass1
     {
-        // TODO: set renderstates here.
-
         VertexShader = compile vs_2_0 CellVertexShader();
         PixelShader = compile ps_2_0 CellPixelShader();
     }

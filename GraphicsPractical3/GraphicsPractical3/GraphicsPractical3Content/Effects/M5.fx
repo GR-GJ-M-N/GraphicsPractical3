@@ -4,6 +4,7 @@ float4x4 Projection;
 float3 Camera;
 TextureCube CubeMap;
 
+//Sampler for the Cube Map. Unfortunately there's somethign wrong with the mapping.
 samplerCUBE ReflectionSampler = sampler_state {
 	Texture = CubeMap;
 	MipFilter = LINEAR;
@@ -35,36 +36,24 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
     float4 worldPosition = mul(input.Position, World);
     float4 viewPosition = mul(worldPosition, View);
     output.Position = mul(viewPosition, Projection);
+	//Get the unit vector from the point to the camera and the normal, and reflect the view vector on the normal to get the reflection vector
 	float3 ViewDir = normalize(Camera - worldPosition);
 	float3 Normal = normalize(mul(input.Normal, World));
 
 	output.TexCoords = reflect(ViewDir, Normal);
-	//output.TexCoords = worldPosition;
-	//output.TexCoords = input.Normal;
-	//output.TexCoords = Normal;
-
-	//output.TexCoords = reflect(CtoVertex, Normal);
-
-    // TODO: add your vertex shader code here.
 
     return output;
 }
 
 float4 CubeMapLookup(float3 Point)
 {
-	//return float4((float3)texCUBE(ReflectionSampler, Point), 0.5f) + float4(Point, 0.5);
+	//Use texCUBE to get the correct color for the Point. Unfortunately there's seomthing wrong with the mapping
 	return texCUBE(ReflectionSampler, Point);
-	//return float4(0, 0.145f, 0.984f, 1);
 }
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
-    // TODO: add your pixel shader code here.
-	//return float4(input.TexCoords, 1);
 	return CubeMapLookup(input.TexCoords);
-	//return CubeMapLookup(normalize(input.TexCoords));
-	//return texCUBE(ReflectionSampler, normalize(input.TexCoords));
-    //return float4(input.Normal.x, input.Normal.y, input.Normal.z, 1);
 }
 
 technique Technique1

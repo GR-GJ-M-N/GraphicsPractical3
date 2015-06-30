@@ -234,19 +234,21 @@ namespace GraphicsPractical3
         {
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                //Translate camera in direction of Eye
+                //Translate camera in direction of Focus - Eye
                 Vector3 focusVector = Vector3.Normalize(this.camera.Focus - this.camera.Eye);
                 float translationFactor = timeStep * 0.025f;
                 focusVector = translationFactor * focusVector;
+                //Translate both the Eye and Focus, otherwise we get weird behaviour that the Focus and Eye are converging
                 this.camera.Focus += focusVector;
                 this.camera.Eye = this.camera.Eye + focusVector;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
-                //Translate camera in opposite direction of Eye
+                //Translate camera in opposite direction of Focus - Eye
                 Vector3 focusVector = Vector3.Normalize(this.camera.Focus - this.camera.Eye);
                 float translationFactor = timeStep * 0.025f;
                 focusVector = translationFactor * focusVector;
+                //Translate both the Eye and Focus, otherwise we get weird behaviour that the Focus and Eye are converging
                 this.camera.Focus -= focusVector;
                 this.camera.Eye = this.camera.Eye - focusVector;
             }
@@ -265,7 +267,7 @@ namespace GraphicsPractical3
                 this.camera.Focus = Vector3.Transform(this.camera.Focus - this.camera.Eye, horRotMatrix) + this.camera.Eye;
                 this.camera.Focus = Vector3.Transform(this.camera.Focus - this.camera.Eye, verRotMatrix) + this.camera.Eye;
             }
-            //Mouse.SetPosition(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
+            
             this.mouseState = newState;
 
         }
@@ -276,16 +278,13 @@ namespace GraphicsPractical3
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            //E5 begin
-            //E5RenderTarget2D = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
-            //graphics.GraphicsDevice.SetRenderTarget(E5RenderTarget2D);
-            //E5 einde
             GraphicsDevice.Clear(Color.DeepSkyBlue);
 
+            //Was necessary to fix some weird bug where invisible faces would show up in front of visible faces
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             
-
+            //Call the correct drawing methods for each scene
             switch (this.sceneState)
             {
                 case Scenes.Normal:
@@ -339,11 +338,13 @@ namespace GraphicsPractical3
                     break;
             }
 
+            //Draws the scene name in the top left corner
             this.spriteBatch.Begin();
             this.spriteBatch.DrawString(this.font, this.scene.name, new Vector2(10, 10), Color.White);
             this.spriteBatch.End();
             base.Draw(gameTime);
 
+            //special cases for post-processing methods
             if (sceneState == Scenes.E5) 
             {
                 ((E5Scene)this.scene).DrawAfter(graphics, spriteBatch);
