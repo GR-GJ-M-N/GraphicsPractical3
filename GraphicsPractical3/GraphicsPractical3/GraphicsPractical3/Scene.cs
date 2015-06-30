@@ -119,6 +119,7 @@ namespace GraphicsPractical3
 
         public override void Draw() {}
 
+        //This draws the normal scene to target
         public void DrawBefore(GraphicsDeviceManager graphics)
         { 
             graphics.GraphicsDevice.SetRenderTarget(target);
@@ -135,6 +136,7 @@ namespace GraphicsPractical3
             this.mesh.Draw();
         }
 
+        //This is the postprocessing on target, which will then be drawn to the screen
         public void DrawAfter(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
         {
             graphics.GraphicsDevice.SetRenderTarget(null);
@@ -159,26 +161,24 @@ namespace GraphicsPractical3
 
         public override void Draw() { }
 
+        //This draws the normal scene to target
         public void DrawBefore(GraphicsDeviceManager graphics)
         {
             graphics.GraphicsDevice.SetRenderTarget(target);
+
             this.mesh = this.model.Meshes[0];
             Effect effect = this.mesh.Effects[0];
 
             this.camera.SetEffectParameters(effect);
-            //effect.CurrentTechnique = effect.Techniques["BlinnPhong"];
             effect.CurrentTechnique = effect.Techniques["Normal"];
 
             effect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
             effect.Parameters["Camera"].SetValue(this.camera.Eye);
             effect.Parameters["World"].SetValue(this.world);
-            effect.Parameters["DiffuseColor"].SetValue(Color.Red.ToVector4());
-            effect.Parameters["SpecularColor"].SetValue(Color.White.ToVector4());
-            effect.Parameters["SpecularIntensity"].SetValue(0.5f);
-            effect.Parameters["SpecularPower"].SetValue(20000.0f);
             this.mesh.Draw();
         }
 
+        //This is the postprocessing on target, which will then be drawn to the screen
         public void DrawAfter(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
         {
             float[] weights = new float[7];
