@@ -13,7 +13,7 @@ namespace GraphicsPractical3
 {
     public enum Scenes
     {
-        Normal, White, E1, E3, E5, E6
+        Normal, White, E1, E3, E5, E6, M4
     }
 
     /// <summary>
@@ -153,6 +153,9 @@ namespace GraphicsPractical3
                         this.sceneState = Scenes.E6;
                         break;
                     case Scenes.E6:
+                        this.sceneState = Scenes.M4;
+                        break;
+                    case Scenes.M4:
                         this.sceneState = Scenes.Normal;
                         break;
                 }
@@ -203,6 +206,14 @@ namespace GraphicsPractical3
                         e6Scene.model.Meshes[0].MeshParts[0].Effect = e6Scene.effect;
                         e6Scene.target = new RenderTarget2D(graphics.GraphicsDevice, 800, 600);
                         break;
+                    case Scenes.M4:
+                        this.scene = new M4Scene();
+                        M4Scene m4Scene = (M4Scene)this.scene;
+                        m4Scene.effect = this.Content.Load<Effect>("Effects/M5");
+                        m4Scene.model = this.Content.Load<Model>("Models/teapot");
+                        m4Scene.texture = this.Content.Load<Texture2D>("Textures/uffizi_cross");
+                        m4Scene.model.Meshes[0].MeshParts[0].Effect = m4Scene.effect;
+                        break;
                 }
                 this.sceneHasChanged = false;
             }
@@ -215,17 +226,19 @@ namespace GraphicsPractical3
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
                 //Translate camera in direction of Eye
-                Vector3 focusVector = this.camera.Focus - this.camera.Eye;
+                Vector3 focusVector = Vector3.Normalize(this.camera.Focus - this.camera.Eye);
                 float translationFactor = timeStep * 0.025f;
                 focusVector = translationFactor * focusVector;
+                this.camera.Focus += focusVector;
                 this.camera.Eye = this.camera.Eye + focusVector;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
                 //Translate camera in opposite direction of Eye
-                Vector3 focusVector = this.camera.Focus - this.camera.Eye;
+                Vector3 focusVector = Vector3.Normalize(this.camera.Focus - this.camera.Eye);
                 float translationFactor = timeStep * 0.025f;
                 focusVector = translationFactor * focusVector;
+                this.camera.Focus -= focusVector;
                 this.camera.Eye = this.camera.Eye - focusVector;
             }
 
@@ -235,8 +248,8 @@ namespace GraphicsPractical3
             {
                 float dX = newState.X - mouseState.X;
                 float dY = newState.Y - mouseState.Y;
-                float horRot = dX * -0.001f;
-                float verRot = dY * -0.001f;
+                float horRot = dX * -0.003f;
+                float verRot = dY * -0.003f;
 
                 Matrix horRotMatrix = Matrix.CreateRotationY(horRot);
                 Matrix verRotMatrix = Matrix.CreateRotationX(verRot);
@@ -303,6 +316,13 @@ namespace GraphicsPractical3
                     e3Scene.world = Matrix.CreateScale(3.0f);
                     e3Scene.camera = this.camera;
                     e3Scene.Draw();
+                    break;
+                case Scenes.M4:
+                    M4Scene m4Scene = (M4Scene)this.scene;
+
+                    m4Scene.world = Matrix.CreateScale(0.25f);
+                    m4Scene.camera = this.camera;
+                    m4Scene.Draw();
                     break;
             }
 

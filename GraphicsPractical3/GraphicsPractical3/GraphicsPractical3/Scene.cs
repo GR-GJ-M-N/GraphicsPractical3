@@ -202,4 +202,36 @@ namespace GraphicsPractical3
             spriteBatch.End();
         }
     }
+
+    class M4Scene : Scene
+    {
+        public ModelMesh mesh;
+        public Model model;
+        public Texture2D texture;
+
+        public M4Scene()
+        {
+            this.name = "M4";
+        }
+
+        public override void Draw()
+        { 
+            this.mesh = this.model.Meshes[0];
+            Effect effect = this.mesh.Effects[0];
+
+            this.camera.SetEffectParameters(effect);
+            effect.CurrentTechnique = effect.Techniques["Technique1"];
+
+            //effect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
+            effect.Parameters["World"].SetValue(this.world);
+            effect.Parameters["Camera"].SetValue(this.camera.Eye);
+            effect.Parameters["CubeMap"].SetValue(this.texture);
+            /*effect.Parameters["DiffuseColor"].SetValue(Color.Red.ToVector4());
+            effect.Parameters["SpecularColor"].SetValue(Color.White.ToVector4());
+            effect.Parameters["SpecularIntensity"].SetValue(0.5f);
+            effect.Parameters["SpecularPower"].SetValue(20000.0f);
+            effect.Parameters["ShadesCount"].SetValue(4);*/
+            this.mesh.Draw();
+        }
+    }
 }

@@ -11,8 +11,6 @@ struct VertexShaderInput
     float4 Position : POSITION0;
 	float4 Normal3D : NORMAL0;
 	float4 Color : COLOR0;
-    // TODO: add input channels such as texture
-    // coordinates and vertex colors here.
 };
 
 struct VertexShaderOutput
