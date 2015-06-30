@@ -183,6 +183,7 @@ namespace GraphicsPractical3
                         E2Scene e2Scene = (E2Scene)this.scene;
 
                         e2Scene.effect = this.Content.Load<Effect>("Effects/Effect1");
+                        e2Scene.quadEffect = this.Content.Load<Effect>("Effects/Effect1");
                         e2Scene.model = this.Content.Load<Model>("Models/bunny");
                         e2Scene.model.Meshes[0].MeshParts[0].Effect = e2Scene.effect;
                         e2Scene.quadTexture = Content.Load<Texture>("Textures/CobblestonesDiffuse");
@@ -306,7 +307,7 @@ namespace GraphicsPractical3
 
                     e2Scene.world = Matrix.CreateScale(3.0f);
                     e2Scene.camera = this.camera;
-                    e2Scene.Draw();
+                    e2Scene.Draw2(Content, GraphicsDevice);
                     break;
                 case Scenes.E5:
                     E5Scene e5Scene = (E5Scene)this.scene;

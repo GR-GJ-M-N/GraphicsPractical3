@@ -85,6 +85,8 @@ namespace GraphicsPractical3
         private short[] quadIndices;
         private Matrix quadTransform;
 
+        public Effect quadEffect;
+
         public E2Scene()
         {
             this.name = "E2";
@@ -96,11 +98,10 @@ namespace GraphicsPractical3
 
         public void Draw2(ContentManager Content, GraphicsDevice graphicsDevice)
         {
-            Effect quadEffect = Content.Load<Effect>("Effects/Simple");
             quadEffect.Parameters["QuadTexture"].SetValue(this.quadTexture);
             quadEffect.Parameters["World"].SetValue(this.quadTransform);
-            quadEffect.CurrentTechnique = quadEffect.Techniques["Texture"];
-            //quadEffect.CurrentTechnique = quadEffect.Techniques["E2Spotlight"];
+            //quadEffect.CurrentTechnique = quadEffect.Techniques["Texture"];
+            quadEffect.CurrentTechnique = quadEffect.Techniques["E2Spotlight"];
             this.camera.SetEffectParameters(quadEffect);
 
             foreach (EffectPass pass in quadEffect.CurrentTechnique.Passes)
