@@ -79,7 +79,7 @@ float4 E5PixelShader(float2 TextureCoord : TEXCOORD0) : COLOR0
 	 //Converts the color to the right b/w value
 	 float bw = color.r * 0.3 + color.g * 0.59 + color.b * 0.11;
 
-	 Return the b/w color
+	 //Return the b/w color
      return float4(bw, bw, bw, 1);
 } 
 
