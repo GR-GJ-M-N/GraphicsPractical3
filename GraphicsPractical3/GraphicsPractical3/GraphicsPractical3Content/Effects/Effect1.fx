@@ -93,13 +93,15 @@ technique E5PostProcessing
 // E6 ----------------------------------------------------------------
 texture E6textureObject;
 sampler E6SceneSampler = sampler_state{ Texture = <E6textureObject>; };
+float2 offsets[7];
+float weights[7];
 
 float4 E6PixelShader(float2 TextureCoord : TEXCOORD0) : COLOR0
 {
 	 float4 color = float4(0.0, 0.0, 0.0, 0.0);
-	 //float4 weight = float4(1.0/9.0, 1.0/9.0, 1.0/9.0, 1.0/9.0);
-	 float4 weight = float4(1.0/3.0, 1.0/3.0, 1.0/3.0, 1.0/3.0);
-	 //float4 weight = float4(1.0, 1.0, 1.0, 1.0);
+	 float weight = 1.0/9.0;
+	 //float weight = 1.0/3.0;
+	 //float weight = 1.0;
 
 	 /*color += tex2D(E6SceneSampler, TextureCoord + float2(-1, -1)) * weight;
 	 color += tex2D(E6SceneSampler, TextureCoord + float2(0, -1)) * weight;
@@ -113,10 +115,17 @@ float4 E6PixelShader(float2 TextureCoord : TEXCOORD0) : COLOR0
 	 color += tex2D(E6SceneSampler, TextureCoord + float2(0, 1)) * weight;
 	 color += tex2D(E6SceneSampler, TextureCoord + float2(1, 1)) * weight;*/
 
-	 //color = tex2D(E6SceneSampler, TextureCoord + float2(1, 0));
-	 color = tex2D(E6SceneSampler, TextureCoord + float2(1, 0));
+	 //color = tex2D(E6SceneSampler, TextureCoord + float2(0.5f, 0));
+	 //color = tex2D(E6SceneSampler, float4(1, 1, 1, 1));
+	 //color = tex2D(E6SceneSampler, float4(TextureCoord.x, TextureCoord.x, TextureCoord.x, 1));
+	 //color = tex2D(E6SceneSampler, TextureCoord);
 
-	 //OFFSET WERKT NIET GOED, HORIZONTALE STREPEN
+	 //^ OFFSET WERKT NIET GOED? ^
+
+	 //Werkt :)
+	 for (int i = 0; i < 7; ++i)
+		color += tex2D(E6SceneSampler, TextureCoord + offsets[i]) * weight; 
+        //color += tex2D(E6SceneSampler, TextureCoord + offsets[i]) * weights[i]; 
 
 	 return color;
 } 
