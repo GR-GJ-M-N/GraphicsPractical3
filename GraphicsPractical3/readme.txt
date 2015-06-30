@@ -19,8 +19,9 @@ M5	...
 d
 E3, E5 and E6 work
 E2 didn't work, partially because of some software issues, and is thus not included
-M5 kind of works?
+M5 kind of works a bit
 
-We implemented the effects in Effect1.fx and moved part of the code from each assignment to Scene.cs to make the switching possible and the whole code less of a mess
+We implemented the effects in Effect1.fx and moved part of the code from each task to Scene.cs to make the switching possible and the whole code less of a mess
+Besides cycling through the tasks, you can move the camera with W and S, rotate the object with A and D and move the object by moving the mouse
 
 OH NO! IF YOU READ THIS WE MAY HAVE FORGOTTEN TO DO THE CLEANUP

@@ -217,7 +217,9 @@ namespace GraphicsPractical3
 
         void UpdateCamera(float timeStep)
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.W))
+            KeyboardState kbState = Keyboard.GetState();
+
+            if (kbState.IsKeyDown(Keys.W))
             {
                 //Translate camera in direction of Focus - Eye
                 Vector3 focusVector = Vector3.Normalize(this.camera.Focus - this.camera.Eye);
@@ -227,7 +229,7 @@ namespace GraphicsPractical3
                 this.camera.Focus += focusVector;
                 this.camera.Eye = this.camera.Eye + focusVector;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            if (kbState.IsKeyDown(Keys.S))
             {
                 //Translate camera in opposite direction of Focus - Eye
                 Vector3 focusVector = Vector3.Normalize(this.camera.Focus - this.camera.Eye);
@@ -238,8 +240,16 @@ namespace GraphicsPractical3
                 this.camera.Eye = this.camera.Eye - focusVector;
             }
 
-            MouseState newState = Mouse.GetState();
+            //Rotate the object if A or D is pressed
+            float deltaAngle = 0;
+            if (kbState.IsKeyDown(Keys.A))
+                deltaAngle += -3 * timeStep;
+            if (kbState.IsKeyDown(Keys.D))
+                deltaAngle += 3 * timeStep;
+            if (deltaAngle != 0)
+                this.camera.Eye = Vector3.Transform(this.camera.Eye, Matrix.CreateRotationY(deltaAngle / 60));
 
+            MouseState newState = Mouse.GetState();
             if (newState != this.mouseState)
             {
                 float dX = newState.X - mouseState.X;
@@ -322,7 +332,7 @@ namespace GraphicsPractical3
             this.spriteBatch.End();
             base.Draw(gameTime);
 
-            //special cases for post-processing methods
+            //Special cases for post-processing methods
             if (sceneState == Scenes.E5) 
             {
                 ((E5Scene)this.scene).DrawAfter(graphics, spriteBatch);
