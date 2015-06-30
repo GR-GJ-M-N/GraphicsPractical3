@@ -181,7 +181,8 @@ namespace GraphicsPractical3
             Effect effect = this.mesh.Effects[0];
 
             this.camera.SetEffectParameters(effect);
-            effect.CurrentTechnique = effect.Techniques["BlinnPhong"];
+            //effect.CurrentTechnique = effect.Techniques["BlinnPhong"];
+            effect.CurrentTechnique = effect.Techniques["Normal"];
 
             effect.Parameters["Light"].SetValue(new Vector3(50.0f, 50.0f, 50.0f));
             effect.Parameters["Camera"].SetValue(this.camera.Eye);
