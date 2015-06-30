@@ -61,14 +61,17 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
 float4 CubeMapLookup(float3 Point)
 {
+	//return float4((float3)texCUBE(ReflectionSampler, Point), 0.5f) + float4(Point, 0.5);
 	return texCUBE(ReflectionSampler, Point);
+	//return float4(0, 0.145f, 0.984f, 1);
 }
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
     // TODO: add your pixel shader code here.
 	//return float4(input.TexCoords, 1);
-	return CubeMapLookup(normalize(input.TexCoords));
+	return CubeMapLookup(float3(0, 0.145f, 0.984f));
+	//return CubeMapLookup(normalize(input.TexCoords));
 	//return texCUBE(ReflectionSampler, normalize(input.TexCoords));
     //return float4(input.Normal.x, input.Normal.y, input.Normal.z, 1);
 }
