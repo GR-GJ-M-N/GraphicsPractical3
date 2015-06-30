@@ -124,7 +124,7 @@ namespace GraphicsPractical3
             }
 
             //Camera movement stuff
-            //this.UpdateCamera(timeStep);
+            this.UpdateCamera(timeStep);
 
             this.kState = Keyboard.GetState();
 

@@ -14,15 +14,10 @@ samplerCUBE ReflectionSampler = sampler_state {
 	AddressW = clamp;
 };
 
-// TODO: add effect parameters here.
-
 struct VertexShaderInput
 {
     float4 Position : POSITION0;
 	float4 Normal : NORMAL0;
-
-    // TODO: add input channels such as texture
-    // coordinates and vertex colors here.
 };
 
 struct VertexShaderOutput
@@ -31,10 +26,6 @@ struct VertexShaderOutput
 	float4 Position3D : TEXCOORD0;
 	float4 Normal : TEXCOORD1;
 	float3 TexCoords : TEXCOORD2;
-
-    // TODO: add vertex shader outputs such as colors and texture
-    // coordinates here. These values will automatically be interpolated
-    // over the triangle, and provided as input to your pixel shader.
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
@@ -70,7 +61,7 @@ float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
     // TODO: add your pixel shader code here.
 	//return float4(input.TexCoords, 1);
-	return CubeMapLookup(float3(0, 0.145f, 0.984f));
+	return CubeMapLookup(input.TexCoords);
 	//return CubeMapLookup(normalize(input.TexCoords));
 	//return texCUBE(ReflectionSampler, normalize(input.TexCoords));
     //return float4(input.Normal.x, input.Normal.y, input.Normal.z, 1);
