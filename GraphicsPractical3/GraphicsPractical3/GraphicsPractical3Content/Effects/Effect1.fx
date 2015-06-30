@@ -67,56 +67,6 @@ technique White
     }
 }
 
-// E2 ----------------------------------------------------------------
-float3 AmbientLightColor = float3(.15, .15, .15);
-float3 DiffuseColor2 = float3(.85, .85, .85);
-//float3 LightPosition = float3(0, 5000, 0);
-float3 LightPosition = float3(0, 500, 0);
-float3 LightDirection = float3(0, -1, 0);
-//float ConeAngle = 90;
-float ConeAngle = 20;
-float3 LightColor = float3(1, 1, 1);
-float LightFalloff = 20;
-
-texture E2textureObject;
-sampler E2SceneSampler = sampler_state{ Texture = <E2textureObject>; };
-
-//pixel shader doet de lighting calculations
-float4 E2PixelShader(VertexShaderOutput input) : COLOR0
-{
-  float3 diffuseColor2 = DiffuseColor2;
-
-
-  //diffuseColor2 *= tex2D(E2SceneSampler, input.UV).rgb;	//Moet misschien niet
-
-  float3 totalLight = float3(0, 0, 0);
-  totalLight += AmbientLightColor;
-  float3 lightDir = normalize(LightPosition - input.WorldPosition);
-  float diffuse = saturate(dot(normalize(input.Normal), lightDir));
-
-  // (dot(p - lp, ld) / cos(a))^f
-  float d = dot(-lightDir, normalize(LightDirection));
-  float a = cos(ConeAngle);
-
-  float att = 0;
-
-  if (a < d)
-    att = 1 - pow(clamp(a / d, 0, 1), LightFalloff);
-
-  totalLight += diffuse * att * LightColor;
-
-  return float4(diffuseColor2 * totalLight, 1);
-}
-
-technique E2Spotlight
-{
-     pass P0
-     {
-		  VertexShader = compile vs_2_0 VertexShaderFunction();
-          PixelShader = compile ps_2_0 E2PixelShader();
-     }
-} 
-
 // E5 ----------------------------------------------------------------
 texture E5textureObject;
 sampler E5SceneSampler = sampler_state{ Texture = <E5textureObject>; };
@@ -229,57 +179,5 @@ technique BlinnPhong
 	{
 		VertexShader = compile vs_2_0 BlinnPhongVertexShader();
 		PixelShader  = compile ps_2_0 BlinnPhongPixelShader();
-	}
-}
-
-//---------------------------------------- Technique: 3 Texture ----------------------------------------
-texture QuadTexture;
-
-sampler2D TexturetextureSampler = sampler_state{
-	Texture = <QuadTexture>;
-	MagFilter = Linear;
-	MinFilter = Linear;
-	AddressU = Wrap;
-	AddressV = Wrap;
-};
-
-struct TextureVertexShaderInput
-{
-	float4 Position3D : POSITION0;
-	float4 Normal3D : NORMAL0;
-	float4 Color : COLOR0;
-	float2 TextureCoord : TEXCOORD0;
-	float4 Place : TEXCOORD1;
-};
-
-VertexShaderOutput TextureVertexShader(TextureVertexShaderInput input)
-{
-	// Allocate an empty output struct
-	VertexShaderOutput output = (VertexShaderOutput)0;
-
-	// Do the matrix multiplications for perspective projection and the world transform
-	float4 worldPosition = mul(input.Position3D, World);
-    float4 viewPosition  = mul(worldPosition, View);
-	output.Position2D    = mul(viewPosition, Projection);
-
-	output.Normal = input.Normal3D.xyz;
-	output.TextureCoord = input.TextureCoord;
-
-	return output;
-}
-
-float4 TexturePixelShader(VertexShaderOutput input) : COLOR0
-{
-	float4 textureColor = tex2D(TexturetextureSampler, input.TextureCoord);
-
-	return textureColor;
-}
-
-technique Texture
-{
-	pass Pass0
-	{
-		VertexShader = compile vs_2_0 TextureVertexShader();
-		PixelShader  = compile ps_2_0 TexturePixelShader();
 	}
 }
